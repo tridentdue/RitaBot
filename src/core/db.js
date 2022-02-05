@@ -10,6 +10,7 @@
 const autoTranslate = require("./auto");
 const Sequelize = require("sequelize");
 const logger = require("./logger");
+const {oneLine} = require("common-tags");
 const Op = Sequelize.Op;
 let dbNewPrefix = "";
 const server_obj = {};
@@ -56,10 +57,7 @@ db.
    then(() =>
    {
 
-      logger(
-         "dev",
-         `----------------------------------------\nSuccessfully connected to database`
-      );
+      console.log(`----------------------------------------\nSuccessfully connected to database`);
 
    }).
    catch((err) =>
@@ -365,6 +363,17 @@ exports.initializeDatabase = async function initializeDatabase (client)
       }
       console.log("----------------------------------------\nDatabase fully initialized.\n----------------------------------------");
       // });
+
+      logger(
+         "custom",
+         {
+            "color": "ok",
+            "msg": oneLine`
+            :wave:  **${client.user.username}**
+            - Database fully initialized.
+         `
+         }
+      );
 
    });
 

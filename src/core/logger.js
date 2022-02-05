@@ -18,12 +18,15 @@ const spacer = "​                                                          ​
 function devConsole (data)
 {
 
-   if (auth.dev)
+   if (auth.dev && auth.dev === "1")
    {
 
       return console.log(data);
 
    }
+
+   return console.log("DEBUG: Debug Off");
+
 
 }
 

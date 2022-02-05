@@ -63,6 +63,11 @@ else
 
 const events = require("./events");
 
+process.setMaxListeners(15);
+console.log(`process._maxListners(${process._maxListeners})`);
+client.setMaxListeners(15);
+console.log(`client._maxListners(${client._maxListeners})`);
+
 events.listen(client);
 exports.client = client;
 // ---------------
