@@ -25,8 +25,8 @@ function devConsole (data)
 
    }
 
-   //return console.log("DEBUG: Debug Off");
-   return;
+   return console.log("DEBUG: Debug Off");
+
 
 }
 

@@ -303,7 +303,7 @@ function getSettings (data)
    }
 
    // --------------------
-   // Debug Value
+   // Message Debug Value
    // --------------------
 
 
@@ -317,12 +317,12 @@ function getSettings (data)
          if (debugVariable === "0" || debugVariable === "1")
          {
 
-            console.log(`DEBUG: Old Debug Value ${auth.dev}`);
-            auth.dev = debugVariable;
-            console.log(`DEBUG: New Debug Value ${auth.dev}`);
+            console.log(`DEBUG: Old Message Debug Value ${auth.messagedebug}`);
+            auth.messagedebug = debugVariable;
+            console.log(`DEBUG: New Message Debug Value ${auth.messagedebug}`);
 
             data.color = "ok";
-            data.text = `Debug Value set to ${debugVariable}\n`;
+            data.text = `Message Debug Value set to ${debugVariable}\n`;
 
             // -------------
             // Send message
