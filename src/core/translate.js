@@ -377,178 +377,187 @@ function updateServerStats (message)
 module.exports = function run (data) // eslint-disable-line complexity
 {
 
-   // -------------------------
-   // Report invalid languages
-   // -------------------------
-
-   invalidLangChecker(
-      data.translate.from,
-      function invalidLangChecker ()
-      {
-
-         data.color = "warn";
-         data.text = `:warning:  Cannot translate from \`${
-            data.translate.from.invalid.join("`, `")}\`.`;
-
-         // -------------
-         // Send message
-         // -------------
-
-         botSend(data);
-
-      }
-   );
-
-   invalidLangChecker(
-      data.translate.to,
-      function invalidLangChecker ()
-      {
-
-         data.color = "warn";
-         data.text = `:warning:  Cannot translate to \`${
-            data.translate.to.invalid.join("`, `")}\`.`;
-
-         // -------------
-         // Send message
-         // -------------
-
-         botSend(data);
-
-      }
-   );
-
-   // -------------------------------------
-   // Stop if there are no valid languages
-   // -------------------------------------
-
-   if (
-      data.translate.to.valid.length < 1 ||
-      data.translate.from.valid && data.translate.from.valid.length < 1
-   )
+   if (process.env.MAINTENANCE_MODE === 1)
    {
 
-      return;
+      return console.log("Maintenance mode active");
 
    }
-
-   // --------------------------------
-   // Handle value of `from` language
-   // --------------------------------
-
-   let from = data.translate.from;
-
-   if (from !== "auto")
+   else if (process.env.MAINTENANCE_MODE === 0)
    {
 
-      from = data.translate.from.valid[0].iso;
+      // -------------------------
+      // Report invalid languages
+      // -------------------------
 
-   }
-
-   // ---------------
-   // Get guild data
-   // ---------------
-
-   let guild = null;
-
-   if (data.message.channel.type === "text")
-   {
-
-      guild = data.message.channel.guild;
-
-   }
-
-   // ----------------------------------------------
-   // Translate multiple chains (!translate last n)
-   // ----------------------------------------------
-
-   if (data.bufferChains)
-   {
-
-      return bufferChains(
-         data,
-         from,
-         guild
-      );
-
-   }
-
-   // -----------------------------
-   // Multi-translate same message
-   // -----------------------------
-
-   const translateBuffer = {};
-
-   if (data.translate.multi && data.translate.to.valid.length > 1)
-   {
-
-      // ------------------------------------------
-      // Stop if user requested too many languages
-      // ------------------------------------------
-
-      if (data.translate.to.valid.length > 6)
-      {
-
-         data.text = "Too many languages specified";
-         data.color = "error";
-
-         // -------------
-         // Send message
-         // -------------
-
-         return botSend(data);
-
-      }
-
-      // --------------------
-      // Buffer translations
-      // --------------------
-
-      const bufferID = data.message.createdTimestamp;
-
-      data.color = null;
-
-      data.text = "";
-
-      translateBuffer[bufferID] = {
-         "count": 0,
-         "len": data.translate.to.valid.length,
-         "text": "",
-         update (newMsg)
+      invalidLangChecker(
+         data.translate.from,
+         function invalidLangChecker ()
          {
 
-            this.count += 1;
-            this.text += newMsg;
+            data.color = "warn";
+            data.text = `:warning:  Cannot translate from \`${
+               data.translate.from.invalid.join("`, `")}\`.`;
 
-            if (this.count === this.len)
-            {
+            // -------------
+            // Send message
+            // -------------
 
-               data.text = this.text;
-               data.color = data.member.displayColor;
-               data.showAuthor = true;
-               getUserColor(
-                  data,
-                  botSend
-               );
-
-            }
+            botSend(data);
 
          }
-      };
+      );
 
-      data.translate.to.valid.forEach(async (lang) =>
-      {
-
-         const matches = await discordPatch(data.translate.original);
-         translate(
-            matches.text,
-            {
-               from,
-               "to": lang.iso
-            }
-         ).then((res) =>
+      invalidLangChecker(
+         data.translate.to,
+         function invalidLangChecker ()
          {
 
-            /*
+            data.color = "warn";
+            data.text = `:warning:  Cannot translate to \`${
+               data.translate.to.invalid.join("`, `")}\`.`;
+
+            // -------------
+            // Send message
+            // -------------
+
+            botSend(data);
+
+         }
+      );
+
+      // -------------------------------------
+      // Stop if there are no valid languages
+      // -------------------------------------
+
+      if (
+         data.translate.to.valid.length < 1 ||
+      data.translate.from.valid && data.translate.from.valid.length < 1
+      )
+      {
+
+         return;
+
+      }
+
+      // --------------------------------
+      // Handle value of `from` language
+      // --------------------------------
+
+      let from = data.translate.from;
+
+      if (from !== "auto")
+      {
+
+         from = data.translate.from.valid[0].iso;
+
+      }
+
+      // ---------------
+      // Get guild data
+      // ---------------
+
+      let guild = null;
+
+      if (data.message.channel.type === "text")
+      {
+
+         guild = data.message.channel.guild;
+
+      }
+
+      // ----------------------------------------------
+      // Translate multiple chains (!translate last n)
+      // ----------------------------------------------
+
+      if (data.bufferChains)
+      {
+
+         return bufferChains(
+            data,
+            from,
+            guild
+         );
+
+      }
+
+      // -----------------------------
+      // Multi-translate same message
+      // -----------------------------
+
+      const translateBuffer = {};
+
+      if (data.translate.multi && data.translate.to.valid.length > 1)
+      {
+
+         // ------------------------------------------
+         // Stop if user requested too many languages
+         // ------------------------------------------
+
+         if (data.translate.to.valid.length > 6)
+         {
+
+            data.text = "Too many languages specified";
+            data.color = "error";
+
+            // -------------
+            // Send message
+            // -------------
+
+            return botSend(data);
+
+         }
+
+         // --------------------
+         // Buffer translations
+         // --------------------
+
+         const bufferID = data.message.createdTimestamp;
+
+         data.color = null;
+
+         data.text = "";
+
+         translateBuffer[bufferID] = {
+            "count": 0,
+            "len": data.translate.to.valid.length,
+            "text": "",
+            update (newMsg)
+            {
+
+               this.count += 1;
+               this.text += newMsg;
+
+               if (this.count === this.len)
+               {
+
+                  data.text = this.text;
+                  data.color = data.member.displayColor;
+                  data.showAuthor = true;
+                  getUserColor(
+                     data,
+                     botSend
+                  );
+
+               }
+
+            }
+         };
+
+         data.translate.to.valid.forEach(async (lang) =>
+         {
+
+            const matches = await discordPatch(data.translate.original);
+            translate(
+               matches.text,
+               {
+                  from,
+                  "to": lang.iso
+               }
+            ).then((res) =>
+            {
+
+               /*
             if (res.error && res.error === true)
             {
 
@@ -561,72 +570,72 @@ module.exports = function run (data) // eslint-disable-line complexity
             }
             */
 
-            // Language you set it to translate to when setting up !tr channel command
-            const langTo = lang.iso;
+               // Language you set it to translate to when setting up !tr channel command
+               const langTo = lang.iso;
 
-            // Detected language from text
-            const detectedLang = res.from.language.iso;
-            // Language you set when setting up !tr channel command
-            const channelFrom = from;
-            if (detectedLang === langTo)
-            {
+               // Detected language from text
+               const detectedLang = res.from.language.iso;
+               // Language you set when setting up !tr channel command
+               const channelFrom = from;
+               if (detectedLang === langTo)
+               {
 
-               return;
+                  return;
 
-            }
-            else if (detectedLang !== channelFrom && channelFrom !== "auto")
-            {
+               }
+               else if (detectedLang !== channelFrom && channelFrom !== "auto")
+               {
 
-               return;
+                  return;
 
-            }
+               }
 
-            const title = `\`\`\`LESS\n ${lang.name} (${lang.native}) \`\`\`\n`;
-            const output = `\n${title}${translateFix(res.text, matches)}\n`;
-            return translateBuffer[bufferID].update(
-               output,
-               data
-            );
+               const title = `\`\`\`LESS\n ${lang.name} (${lang.native}) \`\`\`\n`;
+               const output = `\n${title}${translateFix(res.text, matches)}\n`;
+               return translateBuffer[bufferID].update(
+                  output,
+                  data
+               );
+
+            });
 
          });
+         return;
 
-      });
-      return;
+      }
 
-   }
+      // ------------------------
+      // Send single translation
+      // ------------------------
 
-   // ------------------------
-   // Send single translation
-   // ------------------------
+      const opts = {
+         from,
+         "to": data.translate.to.valid[0].iso
+      };
 
-   const opts = {
-      from,
-      "to": data.translate.to.valid[0].iso
-   };
+      const fw = data.forward;
+      const ft = data.footer;
 
-   const fw = data.forward;
-   const ft = data.footer;
+      // --------------------
+      // Split long messages
+      // --------------------
 
-   // --------------------
-   // Split long messages
-   // --------------------
+      const textArray = fn.chunkString(
+         data.translate.original,
+         1500
+      );
 
-   const textArray = fn.chunkString(
-      data.translate.original,
-      1500
-   );
-
-   textArray.forEach(async (chunk) =>
-   {
-
-      const matches = await discordPatch(chunk);
-      translate(
-         matches.text,
-         opts
-      ).then(async (res) =>
+      textArray.forEach(async (chunk) =>
       {
 
-         /*
+         const matches = await discordPatch(chunk);
+         translate(
+            matches.text,
+            opts
+         ).then(async (res) =>
+         {
+
+            /*
          if (res.error && res.error === true)
          {
 
@@ -639,93 +648,95 @@ module.exports = function run (data) // eslint-disable-line complexity
          }
          */
 
-         res.text = translateFix(res.text, matches);
+            res.text = translateFix(res.text, matches);
 
-         const langTo = opts.to;
+            const langTo = opts.to;
 
-         // Detected language from text
-         const detectedLang = res.from.language.iso;
-         // Language you set when setting up !tr channel command
-         const channelFrom = from;
+            // Detected language from text
+            const detectedLang = res.from.language.iso;
+            // Language you set when setting up !tr channel command
+            const channelFrom = from;
 
-         if (detectedLang === langTo && res.text === data.message.content)
-         {
-
-            try
+            if (detectedLang === langTo && res.text === data.message.content)
             {
 
-               if (data.message.client.channels.cache.get(data.forward).guild.id === data.message.client.channels.cache.get(data.message.channel.id).guild.id)
+               try
                {
 
-                  // console.log("DEBUG: Cross Server Checker - Same Server, Same language");
-                  return;
+                  if (data.message.client.channels.cache.get(data.forward).guild.id === data.message.client.channels.cache.get(data.message.channel.id).guild.id)
+                  {
+
+                     // console.log("DEBUG: Cross Server Checker - Same Server, Same language");
+                     return;
+
+                  }
+
+               }
+               catch (err)
+               {
+
+                  // console.log(
+                  //   `Translate Message Error, Same language Failure, translate.js = Line 638 - SERVER: ${data.message.guild.id}`,
+                  //   err
+                  // );
+
+                  // console.log(`Translate Message Error, Same language Failure, translate.js = Line 638 - SERVER: ${data.message.guild.id}`);
+
+
+               }
+
+               // console.log("DEBUG: Cross Server Checker - Diffrent Server, Same language");
+
+            }
+            else if (detectedLang !== channelFrom && channelFrom !== "auto")
+            {
+
+               // eslint-disable-next-line require-atomic-updates
+               res.text = await reTranslate(matches, opts);
+
+
+            }
+
+            updateServerStats(data.message);
+            data.forward = fw;
+            data.footer = ft;
+            data.color = data.member.displayColor;
+            data.text = res.text;
+            data.showAuthor = true;
+            data.detectedLang = detectedLang;
+            if (auth.messagedebug === "4")
+            {
+
+               console.log(`MD4: ${data.message.guild.name} - ${data.message.guild.id} - ${data.message.createdAt}\nMesssage User - ${data.message.author.tag}\nMesssage Content - ${data.message.content}\nTranslated from: ${detectedLang} to: ${langTo}\n----------------------------------------`);
+
+            }
+            if (auth.messagedebug === "2")
+            {
+
+               console.log(`MD2: ${data.message.guild.name} - ${data.message.guild.id} - ${data.message.createdAt}`);
+
+            }
+            if (data.footer)
+
+            {
+
+               if (data.message.server[0].langdetect === true)
+               {
+
+                  data.footer.text += `\nSource Language: ${detectedLang}`;
 
                }
 
             }
-            catch (err)
-            {
+            return getUserColor(
+               data,
+               botSend
+            );
 
-               // console.log(
-               //   `Translate Message Error, Same language Failure, translate.js = Line 638 - SERVER: ${data.message.guild.id}`,
-               //   err
-               // );
-
-               // console.log(`Translate Message Error, Same language Failure, translate.js = Line 638 - SERVER: ${data.message.guild.id}`);
-
-
-            }
-
-            // console.log("DEBUG: Cross Server Checker - Diffrent Server, Same language");
-
-         }
-         else if (detectedLang !== channelFrom && channelFrom !== "auto")
-         {
-
-            // eslint-disable-next-line require-atomic-updates
-            res.text = await reTranslate(matches, opts);
-
-
-         }
-
-         updateServerStats(data.message);
-         data.forward = fw;
-         data.footer = ft;
-         data.color = data.member.displayColor;
-         data.text = res.text;
-         data.showAuthor = true;
-         data.detectedLang = detectedLang;
-         if (auth.messagedebug === "4")
-         {
-
-            console.log(`MD4: ${data.message.guild.name} - ${data.message.guild.id} - ${data.message.createdAt}\nMesssage User - ${data.message.author.tag}\nMesssage Content - ${data.message.content}\nTranslated from: ${detectedLang} to: ${langTo}\n----------------------------------------`);
-
-         }
-         if (auth.messagedebug === "2")
-         {
-
-            console.log(`MD2: ${data.message.guild.name} - ${data.message.guild.id} - ${data.message.createdAt}`);
-
-         }
-         if (data.footer)
-
-         {
-
-            if (data.message.server[0].langdetect === true)
-            {
-
-               data.footer.text += `\nSource Language: ${detectedLang}`;
-
-            }
-
-         }
-         return getUserColor(
-            data,
-            botSend
-         );
+         });
 
       });
 
-   });
+   }
 
 };
