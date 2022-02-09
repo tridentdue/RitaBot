@@ -299,7 +299,7 @@ exports.initializeDatabase = async function initializeDatabase (client)
       {
 
          // console.log(`DEBUG: Check Guild ${i} `);
-         if (i === 1000 || i === 2000 || i === 3000 || i === 4000 || i === 5000 || i === 6000 || i === 7000 || i === 8000 || i === 9000 || i === 10000)
+         if (i === 1000 || i === 2000 || i === 3000 || i === 4000 || i === 5000 || i === 6000 || i === 7000 || i === 8000 || i === 9000 || i === 10000 || i === 11000 || i === 12000 || i === 13000 || i === 140000 || i === 15000 || i === 16000 || i === 17000 || i === 18000 || i === 19000)
          {
 
             console.log(`DEBUG: Check Guild ${i} `);
