@@ -39,7 +39,7 @@ async function sendMessage (data)
                catch
                {
 
-                  console.log("Bot Message Deleted Error 1, command.send.js");
+                  // console.log("Bot Message Deleted Error 1, command.send.js");
 
                }
 
@@ -109,7 +109,7 @@ async function sendMessage (data)
          if (err.code && err.code === error.unknownMessage)
          {
 
-            return console.log("DEBUG: Already Delete a message");
+            // return console.log("DEBUG: Already Delete a message");
 
          }
 
@@ -168,7 +168,7 @@ module.exports = function run (data)
    catch
    {
 
-      console.log("Bot Message Deleted Error 3, command.send.js",);
+      // console.log("Bot Message Deleted Error 3, command.send.js",);
 
    }
    embed.
