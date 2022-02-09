@@ -16,6 +16,7 @@ const {oneLine} = require("common-tags");
 const secConverter = require("rita-seconds-converter");
 const sendMessage = require("../../core/command.send");
 const botSend = require("../../core/send");
+const logger = require("../../core/logger");
 
 // ------------
 // Invite Link
@@ -302,16 +303,13 @@ module.exports.update = function update (data)
    try
    {
 
-      setTimeout(() => data.message.delete(), auth.time.short);
+      setTimeout(() => data.message.delete(), auth.time.short).catch((err) => logger("dev", `Command Message Deleted Error, misc.js = Line 299 ${err}`));
 
    }
-   catch (err)
+   catch
    {
 
-      console.log(
-         "Command Message Deleted Error, misc.js = Line 299",
-         err
-      );
+      console.log("Command Message Deleted Error, misc.js = Line 299");
 
    }
    return botSend(data);
@@ -336,16 +334,13 @@ module.exports.updatelink = async function updatelink (data)
    try
    {
 
-      setTimeout(() => data.message.delete(), auth.time.short);
+      setTimeout(() => data.message.delete(), auth.time.short).catch((err) => logger("dev", `Command Message Deleted Error, github.js = Line 333 ${err}`));
 
    }
-   catch (err)
+   catch
    {
 
-      console.log(
-         "Command Message Deleted Error, github.js = Line 333",
-         err
-      );
+      console.log("Command Message Deleted Error, github.js = Line 333");
 
    }
 
@@ -395,7 +390,7 @@ module.exports.updatelink = async function updatelink (data)
          messages.forEach((message) =>
          {
 
-            message.delete();
+            message.delete().catch((err) => logger("dev", `Clean ${err}`));
 
          });
 

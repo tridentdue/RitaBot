@@ -195,7 +195,7 @@ async function announcement (data)
                               return;
 
                            }
-                           else if (server[0].announce === true)
+                           else if (server[0].announce === true || server[0].announce === 1)
                            {
 
                               console.log(`Message ${i} Sent to guild ${guild[1].id} - ${guild[1].name}`);

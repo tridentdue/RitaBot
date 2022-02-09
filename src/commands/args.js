@@ -389,7 +389,7 @@ module.exports = function run (data)
             "unblacklist": cmdBlacklist.unblacklist,
             "unmute": cmdMod.unmute,
             "unwarn": cmdEject.unwarn,
-            "update": cmdMisc.updatelink,
+            "update": cmdMisc.update,
             "updatelink": cmdMisc.updatelink,
             "version": cmdVersion,
             "warn": cmdEject.warn

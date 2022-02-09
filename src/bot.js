@@ -67,6 +67,12 @@ process.setMaxListeners(15);
 console.log(`process._maxListners(${process._maxListeners})`);
 client.setMaxListeners(15);
 console.log(`client._maxListners(${client._maxListeners})`);
+if (process.env.MAINTENANCE_MODE)
+{
+
+   console.log(`Maintenance mode: ${process.env.MAINTENANCE_MODE}`);
+
+}
 
 events.listen(client);
 exports.client = client;

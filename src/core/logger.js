@@ -25,8 +25,10 @@ function devConsole (data)
 
    }
 
-   //return console.log("DEBUG: Debug Off");
+   // return console.log("DEBUG: Debug Off");
+   // eslint-disable-next-line no-useless-return
    return;
+
 
 }
 
