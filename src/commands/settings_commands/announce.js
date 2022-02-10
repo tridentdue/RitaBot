@@ -278,7 +278,7 @@ module.exports = function run (data)
    // Error if settings param is missing
    // -----------------------------------
 
-   if (data.message.isAdmin === true)
+   if (data.message.isDev === true)
    {
 
       if (data.cmd.params && data.cmd.params.toLowerCase().includes("off"))
