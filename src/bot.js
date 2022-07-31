@@ -2,10 +2,6 @@
 // -----------------
 // Global variables
 // -----------------
-const http = require("http");
-setInterval(function ping () {
-    http.get("http://translato12.herokuapp.com");
-}, 300000); // every 5 minutes (300000)
 
 // Codebeat:disable[LOC,ABC,BLOCK_NESTING]
 const time = {
